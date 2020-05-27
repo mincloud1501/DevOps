@@ -184,6 +184,12 @@ chmod +x ./install
 ```
 
 - CodeDeploy에서 application 생성하기
+	- [Step 1] 서비스 역할 생성 : CodeDeploy 서비스 역할 생성을 위해 IAM Console에서 Create Role하여 사용 사례 선택에서 `CodeDeploy`를 선택한 후, 역할 이름(CodeDeployRole)을 입력한 후 역할 생성
+	- [Step 2] 애플리케이션 생성 : CodeDeploy 콘솔에서 application을 생성한다. (name: `MyDemoApplication`, 컴퓨팅 플랫폼: `EC2/온프레미스`)
+
+	![createapplication](images/createapplication.png)
+
+	- [Step 3] 배포 그룹 생성 : 배포 그룹명 `MyDemoDeploymentGroup`, 서비스 역할명 `CodeDeployRole`, 배포유형 `현재 위치`, 환경 구성 `Amazon EC2 인스턴스`에서 Key값 `MyCodePipelineDemo`, 배포 구성 `CodeDeployDefault.OneAtaTime`, 로드 밸런싱 `비활성화`, 경보구성 `무시`
 
 ---
 
