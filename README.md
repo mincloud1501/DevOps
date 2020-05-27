@@ -1,5 +1,5 @@
 # DevOps
-DevOps에 대한 개념 및 AWS의 여러 Tool 사용을 통한 실습 및 연구
+DevOps에 대한 개념 및 AWS의 여러 Tool 사용을 통한 실습 및 연구 [![Sources](https://img.shields.io/badge/출처-awsdevops-yellow)](https://aws.amazon.com/ko/devops/what-is-devops/)
 
 
 ### DevOps 모델 정의
@@ -48,42 +48,130 @@ DevOps에 대한 개념 및 AWS의 여러 Tool 사용을 통한 실습 및 연�
 
 ---
 
-#### 지속적 통합
+#### ■ 지속적 통합
 
 - 자동화된 빌드 및 테스트가 수행된 후, 개발자가 코드 변경 사항을 중앙 리포지토리에 정기적으로 병합하는 소프트웨어 개발 방식
 - 지속적 통합의 핵심 목표는 버그를 신속하게 찾아 해결하고, 소프트웨어 품질을 개선하고, 새로운 소프트웨어 업데이트를 검증 및 릴리스하는 데 걸리는 시간을 단축하는 것이다.
 
-#### 지속적 전달
+##### ☞ 1단계: CodeCommit 리포지토리 사용을 위한 권한 및 SSH 설정
+
+- IAM Console에서 기존 정책 직접 연결을 통해 사용자에 `AWSCodeCommitPowerUser` 권한을 추가해 준다.
+
+![addpolicy](images/addpolicy.png)
+
+- CodeCommit은 Git 버전 1.7.9 이상을 사용해야 한다.
+- SSH 및 Windows : Git 및 CodeCommit에 대한 퍼블릭 및 프라이빗 키 설정 후, `codecommit_rsa.pub` 파일 내용을 복사한다.
+	- `codecommit_rsa` : Private Key File
+	- `codecommit_rsa.pub` : Public Key File
+
+```bash
+$ ssh-keygen
+```
+
+- IAM Console > 내 보안 자격 증명에서 Upload SSH public key를 Upload한다.
+
+![sshkey](images/sshkey.png)
+
+- `~/.ssh` 디렉터리에서 config 파일을 생성한다.
+
+```bash
+$ notepad ~/.ssh/config
+```
+
+- 파일에 다음 행을 추가한다. `User 값`은 앞서 복사한 SSH Key ID이고 `IdentityFile`은 Private Key File의 경로 및 이름 (파일 이름은 파일 확장명 없이 config여야 한다. 그렇지 않으면 SSH 연결 실패)
+
+```bash
+Host git-codecommit.*.amazonaws.com
+  User SSH Key
+  IdentityFile ~/.ssh/codecommit_rsa
+```
+
+- SSH 구성 테스트
+
+```bash
+$ ssh git-codecommit.us-east-2.amazonaws.com
+
+You have successfully authenticated over SSH. You can use Git to interact with AWS CodeCommit. Interactive shells are not supported.Connection to git-codecommit.us-east-2.amazonaws.com closed by remote host.
+Connection to git-codecommit.us-east-2.amazonaws.com closed.
+```
+
+##### ☞ 2단계: CodeCommit 리포지토리 생성 및 Repository 복제
+
+- https://console.aws.amazon.com/codecommit/ 에서 CodeCommit 콘솔을 열고 Create repository (`MyDemoRepo`)
+
+- Local repository를 설정하려면 console에서 새 리포지토리를 연 상태에서 페이지 오른쪽 상단의 URL 복제를 선택한 후, Clone SSH(SSH 복제)를 선택한다. Git 리포지토리를 복제할 주소는 클립보드에 복사된다.
+- 터미널 또는 명령줄에서 로컬 리포지토리를 저장하고 싶은 로컬 디렉터리로 이동한다. (`/tmp`)
+- 다음 명령을 실행하여 리포지토리를 복제하여 SSH 주소를 앞 단계에서 복사한 주소로 교체한다. 이 명령을 통해 MyDemoRepo라는 디렉터리가 생성되고 이 디렉터리에 샘플 애플리케이션을 복사한다.
+
+```bash
+$ git clone ssh://Your-SSH-Key-ID@git-codecommit.us-east-2.amazonaws.com/v1/repos/MyDemoRepo my-demo-repo
+```
+
+##### ☞ 3단계: CodeCommit 리포지토리에 Sample Code 추가
+
+- `SampleApp_Linux.zip` 파일을 다운로드하여 앞 단계에서 생성한 `my-demo-repo`에 파일을 복사한다.
+
+```bash
+/my-demo-repo
+   │-- appspec.yml
+   │-- index.html
+   │-- LICENSE.txt
+   └-- scripts
+       │-- install_dependencies
+       │-- start_server
+       └-- stop_server
+```
+
+- 모든 파일 Staging, Commit, Push를 수행한다.
+
+```bash
+$ git add -A
+$ git commit -m "Add sample application files"
+$ git push
+```
+
+![mydemorepo](images/mydemorepo.png)
+
+---
+
+#### ■ 지속적 전달
 
 - 프로덕션에 릴리스하기 위한 코드 변경이 자동으로 빌드, 테스트 및 준비되는 소프트웨어 개발 방식
 - 빌드 단계 이후의 모든 코드 변경 사항을 테스트 환경 및/또는 프로덕션 환경에 배포함으로써 지속적 통합을 확장한다. 지속적 전달이 적절하게 구현되면, 개발자는 언제나 즉시 배포할 수 있고 표준화된 테스트 프로세스를 통과한 빌드 아티팩트를 보유하게 된다.
 
-#### Microservice
+
+##### ☞ CodeDeploy
+
+- CodeDeploy는 Amazon EC2 인스턴스, 온프레미스 인스턴스, 서버리스 Lambda 함수 또는 Amazon ECS 서비스로 애플리케이션 배포를 자동화하는 배포 서비스를 말한다.
+- Code, 서버리스 AWS Lambda 함수, 웹 및 구성 파일, 실행 파일, packages, 스크립트, 멀티미디어 파일의 다양한 애플리케이션 콘텐츠를 거의 무제한으로 배포할 수 있다.
+
+
+#### ■ Microservice
 
 - 단일 애플리케이션을 작은 서비스의 집합으로 구축하는 설계 접근 방식
 - 각 서비스는 자체 프로세스에서 실행되고, 주로 HTTP 기반 API라는 간편한 메커니즘을 사용하는 잘 정의된 인터페이스를 통해 다른 서비스와 통신한다.
 - 비즈니스 기능을 중심으로 구축되며, 각 서비스는 단일 목적으로 한정되어 있다. 다양한 프레임워크 또는 프로그래밍 언어를 사용하여 마이크로 서비스를 작성하고, 이를 독립적으로 단일 서비스 또는 서비스 그룹으로 배포할 수 있다.
 
-#### Code형 Infra
+#### ■ Code형 Infra
 
 - 버전 관리 및 지속적 통합과 같은 코드와 소프트웨어 개발 기술을 사용하여 인프라를 프로비저닝하고 관리하는 방식
 - Cloud의 API 중심 모델을 사용하면 개발자와 시스템 관리자가 수동으로 리소스를 설정 및 구성할 필요 없이 프로그래밍 방식으로 대규모로 인프라와 상호 작용할 수 있다.
 - 엔지니어는 코드 기반 도구를 사용하여 인프라와 인터페이스하고, 애플리케이션 코드를 다루는 방법과 유사한 방식으로 인프라를 다룰 수 있다.
 - 인프라가 코드를 통해 정의되므로 인프라와 서버를 표준화된 패턴을 사용하여 배포하고, 최신 패치와 버전으로 업데이트하거나, 반복 가능한 방식으로 복제할 수 있다.
 
-#### Monitoring & Logging
+#### ■ Monitoring & Logging
 
 - 조직은 지표와 로그를 모니터링하여 애플리케이션 및 인프라 성능이 제품의 최종 사용자 경험에 어떤 영향을 미치는지 확인한다.
 - 조직은 애플리케이션과 인프라에서 생성되는 데이터 및 로그를 캡처하고 분류한 다음 이를 분석함으로써 변경 또는 업데이트가 사용자에게 어떤 영향을 주는지 이해하고, 문제의 근본 원인 또는 예상치 못한 변경에 대한 통찰력을 확보하게 된다.
 
-#### Communication & Cooperation
+#### ■ Communication & Cooperation
 
 - 조직에서 커뮤니케이션과 협업이 증가하는 것도 DevOps의 주요 문화적 측면 중 하나이다.
 - DevOps 도구 및 소프트웨어 제공 프로세스 자동화를 사용하면 개발 및 운영의 워크플로와 책임을 물리적으로 합침으로써 협업이 이루어지게 된다.
 - 해당 팀에서는 이 위에 채팅 애플리케이션, 문제 또는 프로젝트 추적 시스템, wiki를 사용하여 커뮤니케이션을 지원하고 정보를 공유하는 강력한 문화적 표준을 확립한다.
 - 이를 통해 개발자와 운영 그리고 마케팅이나 영업과 같은 다른 팀 간에도 커뮤니케이션이 활발해지면서 조직의 모든 부분에서 목표와 프로젝트에 좀 더 가깝게 다가갈 수 있다.
 
-### DevOps Tools
+### ■ DevOps Tools
 
 - DevOps 모델이 팀에서 고객을 위해 신속하고 안정적으로 배포하고 혁신하도록 지원하려면 효과적인 도구가 필요하다.
 - 이러한 도구는 수동 작업을 자동화하고, 팀이 규모에 따라 복잡한 환경을 관리하도록 지원하며, 엔지니어가 DevOps에서 지원하는 빠른 속도를 관리할 수 있도록 해준다.
