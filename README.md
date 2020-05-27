@@ -48,12 +48,13 @@ DevOps에 대한 개념 및 AWS의 여러 Tool 사용을 통한 실습 및 연�
 
 ---
 
-#### ■ 지속적 통합
+### ■ 지속적 통합 (CodeCommit) [![Sources](https://img.shields.io/badge/출처-CodeCommit-yellow)](https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/welcome.html)
 
 - 자동화된 빌드 및 테스트가 수행된 후, 개발자가 코드 변경 사항을 중앙 리포지토리에 정기적으로 병합하는 소프트웨어 개발 방식
-- 지속적 통합의 핵심 목표는 버그를 신속하게 찾아 해결하고, 소프트웨어 품질을 개선하고, 새로운 소프트웨어 업데이트를 검증 및 릴리스하는 데 걸리는 시간을 단축하는 것이다.
+- 지속적 통합의 핵심 목표는 버그를 신속하게 찾아 해결하고, 소프트웨어 품질을 개선하고, 새로운 소프트웨어 업데이트를 검증 및 릴리스하는데 걸리는 시간을 단축하는 것이다.
 
-##### ☞ 1단계: CodeCommit 리포지토리 사용을 위한 권한 및 SSH 설정
+
+#### ☞ 1단계: CodeCommit 리포지토리 사용을 위한 권한 및 SSH 설정
 
 - IAM Console에서 기존 정책 직접 연결을 통해 사용자에 `AWSCodeCommitPowerUser` 권한을 추가해 준다.
 
@@ -95,7 +96,7 @@ You have successfully authenticated over SSH. You can use Git to interact with A
 Connection to git-codecommit.us-east-2.amazonaws.com closed.
 ```
 
-##### ☞ 2단계: CodeCommit 리포지토리 생성 및 Repository 복제
+#### ☞ 2단계: CodeCommit 리포지토리 생성 및 Repository 복제
 
 - https://console.aws.amazon.com/codecommit/ 에서 CodeCommit 콘솔을 열고 Create repository (`MyDemoRepo`)
 
@@ -107,7 +108,7 @@ Connection to git-codecommit.us-east-2.amazonaws.com closed.
 $ git clone ssh://Your-SSH-Key-ID@git-codecommit.us-east-2.amazonaws.com/v1/repos/MyDemoRepo my-demo-repo
 ```
 
-##### ☞ 3단계: CodeCommit 리포지토리에 Sample Code 추가
+#### ☞ 3단계: CodeCommit 리포지토리에 Sample Code 추가
 
 - `SampleApp_Linux.zip` 파일을 다운로드하여 앞 단계에서 생성한 `my-demo-repo`에 파일을 복사한다.
 
@@ -134,37 +135,77 @@ $ git push
 
 ---
 
-#### ■ 지속적 전달
+### ■ 지속적 전달 (CodePipeline) [![Sources](https://img.shields.io/badge/출처-CodePipeline-yellow)](https://docs.aws.amazon.com/ko_kr/codepipeline/latest/userguide/welcome.html)
 
+- CodePipeline은 소프트웨어 변경 내용을 지속적으로 릴리스하는데 필요한 단계를 자동화한다.
 - 프로덕션에 릴리스하기 위한 코드 변경이 자동으로 빌드, 테스트 및 준비되는 소프트웨어 개발 방식
 - 빌드 단계 이후의 모든 코드 변경 사항을 테스트 환경 및/또는 프로덕션 환경에 배포함으로써 지속적 통합을 확장한다. 지속적 전달이 적절하게 구현되면, 개발자는 언제나 즉시 배포할 수 있고 표준화된 테스트 프로세스를 통과한 빌드 아티팩트를 보유하게 된다.
 
+![CodePipeline](images/CodePipeline.png)
 
-##### ☞ CodeDeploy
+#### ☞ 배포 단계 : CodeDeploy [![Sources](https://img.shields.io/badge/출처-CodeDeploy-yellow)](https://docs.aws.amazon.com/ko_kr/codedeploy/latest/userguide/welcome.html)
 
 - CodeDeploy는 Amazon EC2 인스턴스, 온프레미스 인스턴스, 서버리스 Lambda 함수 또는 Amazon ECS 서비스로 애플리케이션 배포를 자동화하는 배포 서비스를 말한다.
 - Code, 서버리스 AWS Lambda 함수, 웹 및 구성 파일, 실행 파일, packages, 스크립트, 멀티미디어 파일의 다양한 애플리케이션 콘텐츠를 거의 무제한으로 배포할 수 있다.
 
+- EC2 Linux 인스턴스 생성 및 CodeDeploy 에이전트 설치 (free version으로 1$가 결재된다.)
+	- sample application이 배포되는 EC2 인스턴스를 생성한다.
+	- 이 프로세스의 일부로 EC2 instance에 CodeDeploy agent를 설치한다.
+	- CodeDeploy agent는 instance를 CodeDeploy 배포에서 사용할 수 있게 해주는 software package이다.
+	- instance에 IAM 역할을 연결하여 CodeDeploy agent가 application 배포에 사용하는 파일을 가져올 수 있게 허용해 준다.
 
-#### ■ Microservice
+- 인스턴스 역할을 생성을 위해 IAM > 역할만들기 > AWS서비스/EC2 사용사례 > `AmazonEC2RoleforAWSCodeDeploy` 권한 추가 > 역할 이름 `EC2InstanceRole` 으로 생성
+- 인스턴스 시작을 위해 Amazon EC2 콘솔 (https://console.aws.amazon.com/ec2/) 에서 `실행중인 인스턴스` 선택 후 `인스턴스 시작`
+	- [Step 1] : Amazon Linux 2 AMI (HVM), SSD Volume Type 선택
+	- [Step 2] : Choose an Instance Type에서 프리 티어 가능 t2.micro 유형을 선택
+
+	![instancetype](images/instancetype.png)
+
+	- [Step 3] : Configure Instance Details에서 인스턴스 수 `1`, 퍼블릭 IP 자동 할당 `활성화`, IAM role `EC2InstanceRole` 선택 후 User data 필드에 하기 내용을 입력한다. 이 코드는 CodeDeploy 에이전트가 생성되면 인스턴스에 설치한다.
+
+	- [Step 4] : Add Storage 항목은 패스, Add Tag에서 [Key]에 Name을 입력하고 [Value]에 MyCodePipelineDemo를 입력한다.
+	- [Step 5] : Configure Security Group에서 [SSH] 행의 [Source]에서 [My IP]를 선택 후, 규칙 추가하여 [HTTP] [Source]에서 [My IP]를 선택
+	- [Step 6] : Launch 후, key pair를 다운로드 하고 인스턴스를 시작한다.
+
+	![createkeypair](images/createkeypair.png)
+	![instancestatus](images/instancestatus.png)
+
+
+[User Data]
+```bash
+#!/bin/bash
+yum -y update
+yum install -y ruby
+yum install -y aws-cli
+cd /home/ec2-user
+aws s3 cp s3://aws-codedeploy-us-east-2/latest/install . --region us-east-2
+chmod +x ./install
+./install auto
+```
+
+- CodeDeploy에서 application 생성하기
+
+---
+
+### ■ Microservice
 
 - 단일 애플리케이션을 작은 서비스의 집합으로 구축하는 설계 접근 방식
 - 각 서비스는 자체 프로세스에서 실행되고, 주로 HTTP 기반 API라는 간편한 메커니즘을 사용하는 잘 정의된 인터페이스를 통해 다른 서비스와 통신한다.
 - 비즈니스 기능을 중심으로 구축되며, 각 서비스는 단일 목적으로 한정되어 있다. 다양한 프레임워크 또는 프로그래밍 언어를 사용하여 마이크로 서비스를 작성하고, 이를 독립적으로 단일 서비스 또는 서비스 그룹으로 배포할 수 있다.
 
-#### ■ Code형 Infra
+### ■ Code형 Infra
 
 - 버전 관리 및 지속적 통합과 같은 코드와 소프트웨어 개발 기술을 사용하여 인프라를 프로비저닝하고 관리하는 방식
 - Cloud의 API 중심 모델을 사용하면 개발자와 시스템 관리자가 수동으로 리소스를 설정 및 구성할 필요 없이 프로그래밍 방식으로 대규모로 인프라와 상호 작용할 수 있다.
 - 엔지니어는 코드 기반 도구를 사용하여 인프라와 인터페이스하고, 애플리케이션 코드를 다루는 방법과 유사한 방식으로 인프라를 다룰 수 있다.
 - 인프라가 코드를 통해 정의되므로 인프라와 서버를 표준화된 패턴을 사용하여 배포하고, 최신 패치와 버전으로 업데이트하거나, 반복 가능한 방식으로 복제할 수 있다.
 
-#### ■ Monitoring & Logging
+### ■ Monitoring & Logging
 
 - 조직은 지표와 로그를 모니터링하여 애플리케이션 및 인프라 성능이 제품의 최종 사용자 경험에 어떤 영향을 미치는지 확인한다.
 - 조직은 애플리케이션과 인프라에서 생성되는 데이터 및 로그를 캡처하고 분류한 다음 이를 분석함으로써 변경 또는 업데이트가 사용자에게 어떤 영향을 주는지 이해하고, 문제의 근본 원인 또는 예상치 못한 변경에 대한 통찰력을 확보하게 된다.
 
-#### ■ Communication & Cooperation
+### ■ Communication & Cooperation
 
 - 조직에서 커뮤니케이션과 협업이 증가하는 것도 DevOps의 주요 문화적 측면 중 하나이다.
 - DevOps 도구 및 소프트웨어 제공 프로세스 자동화를 사용하면 개발 및 운영의 워크플로와 책임을 물리적으로 합침으로써 협업이 이루어지게 된다.
