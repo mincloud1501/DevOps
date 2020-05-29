@@ -105,7 +105,7 @@ Connection to git-codecommit.us-east-2.amazonaws.com closed.
 - 다음 명령을 실행하여 리포지토리를 복제하여 SSH 주소를 앞 단계에서 복사한 주소로 교체한다. 이 명령을 통해 MyDemoRepo라는 디렉터리가 생성되고 이 디렉터리에 샘플 애플리케이션을 복사한다.
 
 ```bash
-$ git clone ssh://Your-SSH-Key-ID@git-codecommit.us-east-2.amazonaws.com/v1/repos/MyDemoRepo my-demo-repo
+$ git clone ssh://Your-SSH-Key-ID@git-codecommit.us-east-2.amazonaws.com/v1/repos/MyDemoRepo
 ```
 
 #### ☞ 3단계: CodeCommit 리포지토리에 Sample Code 추가
@@ -161,8 +161,7 @@ $ git push
 
 	![instancetype](images/instancetype.png)
 
-	- [Step 3] : Configure Instance Details에서 인스턴스 수 `1`, 퍼블릭 IP 자동 할당 `활성화`, IAM role `EC2InstanceRole` 선택 후 User data 필드에 하기 내용을 입력한다. 이 코드는 CodeDeploy 에이전트가 생성되면 인스턴스에 설치한다.
-
+	- [Step 3] : Configure Instance Details에서 인스턴스 수 `1`, 퍼블릭 IP 자동 할당 `활성화`, IAM role `EC2InstanceRole` 선택
 	- [Step 4] : Add Storage 항목은 패스, Add Tag에서 [Key]에 Name을 입력하고 [Value]에 MyCodePipelineDemo를 입력한다.
 	- [Step 5] : Configure Security Group에서 [SSH] 행의 [Source]에서 [My IP]를 선택 후, 규칙 추가하여 [HTTP] [Source]에서 [My IP]를 선택
 	- [Step 6] : Launch 후, key pair를 다운로드 하고 인스턴스를 시작한다.
@@ -170,17 +169,30 @@ $ git push
 	![createkeypair](images/createkeypair.png)
 	![instancestatus](images/instancestatus.png)
 
+- EC2에 CodeDeploy Agent 설치하기
+	- [Step 1] : PuTTY를 통한 EC2 Instance에 접속하기 [![Sources](https://img.shields.io/badge/출처-AmazonEC2-yellow)](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/putty.html?icmpid=docs_ec2_console) (ID: ec2-user)
+	- [Step 2] : Instance 설정하기, 하기와 같이 설정
 
-[User Data]
 ```bash
-#!/bin/bash
-yum -y update
-yum install -y ruby
-yum install -y aws-cli
-cd /home/ec2-user
-aws s3 cp s3://aws-codedeploy-us-east-2/latest/install . --region us-east-2
-chmod +x ./install
-./install auto
+$sudo yum -y update
+$sudo yum install -y ruby
+$sudo yum install -y aws-cli
+$cd /home/ec2-user
+$sudo aws configure # AWS 접속을 위한 Access Key, Secret Access Key, region name, output format :json
+$wget https://aws-codedeploy-ap-northeast-2.s3.amazonaws.com/latest/install # Agent 설치파일을 다운로드
+$chmod +x ./install # 실행권한을 추가
+$sudo ./install auto # 설치 진행
+$sudo service codedeploy-agent status # Agent가 실행중인지 확인
+
+The AWS CodeDeploy agent is running as PID 6683
+
+$sudo vim /etc/init.d/codedeploy-startup.sh # EC2 인스턴스가 부팅되면 자동으로 AWS CodeDeploy Agent가 실행될 수 있도록 /etc/init.d/에 쉘 스크립트 파일을 생성
+
+#!/bin/bash 
+echo 'Starting codedeploy-agent' 
+sudo service codedeploy-agent restart
+
+$sudo chmod +x /etc/init.d/codedeploy-startup.sh # 스크립트 파일을 저장한뒤, 실행권한을 추가
 ```
 
 - CodeDeploy에서 application 생성하기
@@ -191,6 +203,18 @@ chmod +x ./install
 
 	- [Step 3] 배포 그룹 생성 : 배포 그룹명 `MyDemoDeploymentGroup`, 서비스 역할명 `CodeDeployRole`, 배포유형 `현재 위치`, 환경 구성 `Amazon EC2 인스턴스`에서 Key값 `MyCodePipelineDemo`, 배포 구성 `CodeDeployDefault.OneAtaTime`, 로드 밸런싱 `비활성화`, 경보구성 `무시`
 
+- CodePipeline에서 첫 번째 파이프라인 생성하기
+	- [Step 1] 파이프라인 설정 : 파이프라인명 `MyFirstPipeline`, 새 서비스역할 선택
+	- [Step 2] 소스 스테이지 설정 : 소스 공급자 `AWS CodeCommit`, 리포지토리 이름 `MyDemoRepo`, 브랜치명 `master`
+	- [Step 3] 빌드 스테이지 설정 : 본 실습에서는 빌드 서비스가 필요 없는 코드를 배포하므로 이 단계는 skip한다.
+	- [Step 4] 배포 스테이지 설정 : 배포 공급자 `AWS CodeDeploy`, 애플리케이션명 `MyDemoApplication`, 배포그룹 `MyDemoDeploymentGroup` 설정 후 파이프라인 생성
+
+	![pipelineresult](images/pipelineresult.png)
+
+	- [Step 5] 파이프라인 결과 확인 : EC2 Instance의 Public DNS (http://ec2-3-22-68-153.us-east-2.compute.amazonaws.com/) 를 웹 브라우저에서 확인
+
+	![coderesult](images/coderesult.png)
+	
 ---
 
 ### ■ Microservice
