@@ -227,7 +227,7 @@ $sudo chmod +x /etc/init.d/codedeploy-startup.sh # 스크립트 파일을 저장
 
 - Console을 사용하여 AWS CodeBuild 시작하기
 	- [Step 1] : 두 개의 S3 버킷 생성 (입력 : `codebuild-region-ID-account-ID-input-bucket`, 출력 : `codebuild-region-ID-account-ID-output-bucket`)
-	- [Step 2] : 소스 코드 생성, MessageUtil.java 및 TestMessageUtil.java, pom.xml 파일 생성
+	- [Step 2] : 소스 코드 생성, MessageUtil.java 및 TestMessageUtil.java, pom.xml 파일 생성 (Source는 GitHub 및 CodeCommit, Bitbucket의 Repository를 연동하여 가져올 수도 있다)
 	- [Step 3] : buildspec.yml 파일 생성 후, 소스 코드 및 빌드 사양 파일을 입력 버킷에 추가 (`MessageUtil.zip` 파일을 생성)
 
 	![inputbucket](images/inputbucket.png)
@@ -239,13 +239,62 @@ $sudo chmod +x /etc/init.d/codedeploy-startup.sh # 스크립트 파일을 저장
 
 	![buildproject](images/buildproject.png)
 
-	- [Step 5] : 빌드 실행
+	- [Step 5] : 빌드 실행 후, 단계별 빌드 정보를 확인할 수 있다.
 
 	![buildprojectresult](images/buildprojectresult.png)
+	![buildinfo](images/buildinfo.png)
 
-	- [Step 6] : 빌드 출력 아티팩트 가져오기, Amazon S3 콘솔에서 출력 버킷을 선택하여 target 폴더에서 빌드 출력 결과물을 확인한다.
+	- [Step 6] : 빌드 출력 artifact 가져오기, Amazon S3 콘솔에서 출력 버킷을 선택하여 target 폴더에서 빌드 출력 결과물을 확인한다.
 
 	![buildprojecttarget](images/buildprojecttarget.png)
+
+---
+
+### ■ Communication & Cooperation (CodeStar) [![Sources](https://img.shields.io/badge/출처-CodeStar-yellow)](https://docs.aws.amazon.com/ko_kr/codestar/latest/userguide/welcome.html)
+
+- AWS CodeStar는 AWS에서 소프트웨어 개발 프로젝트를 생성, 관리, 작업하기 위한 클라우드 기반 서비스
+- AWS CodeStar 프로젝트를 통해 AWS에서 애플리케이션을 빠르게 개발, 빌드, 배포할 수 있다.
+- AWS CodeStar 프로젝트는 프로젝트 개발 도구 체인에 대한 AWS 서비스를 생성 및 통합한다.
+- 선택한 AWS CodeStar 프로젝트 템플릿에 따라, 도구 체인에 소스 제어, 빌드, 배포, 가상 서버 또는 서버리스 리소스 등이 포함될 수 있다.
+- AWS CodeStar는 (팀원이라고 하는) 프로젝트 사용자에 필요한 권한을 관리한다. 프로젝트 소유자는 사용자를 프로젝트에 팀원으로 추가하여 각 팀원의 역할에 따라 프로젝트 및 리소스에 대한 액세스 권한을 쉽고 빠르게 부여할 수 있다.
+
+#### AWS CodeStar로 할 수 있는 작업 [![Sources](https://img.shields.io/badge/출처-CodeStar-yellow)](https://us-east-2.console.aws.amazon.com/codestar/home?region=us-east-2#/)
+
+- 웹 애플리케이션, 웹 서비스 등에 대한 템플릿을 사용하여 AWS에서 몇 분 이내에 새 소프트웨어 프로젝트를 시작
+- 팀에 대한 프로젝트 액세스 관리
+- 한 곳에서 프로젝트에 대한 시각화, 운영 협업
+- 필요한 모든 도구로 신속하게 반복
+
+#### ☞ CodeStar 설정 단계
+
+- AWS CodeStar 서비스 역할 만들기
+	- [Step 1] : 서비스 역할 생성
+
+	![servicerole](images/servicerole.png)
+
+	- [Step 2] : IAM 사용자에 대한 권한 구성, IAM 콘솔에서 `AWSCodeStarFullAccess` 관리형 정책을 프로젝트 생성에 사용한 IAM 사용자에 연결
+	- [Step 3] : 연합된 사용자를 위해 권한 구성하기, 연합된 사용자는 사용자가 AWS CodeStar API를 사용하고 프로젝트(예: Amazon EC2 또는 AWS Lambda)에서 사용하는 모든 리소스에 액세스하게 하는 IAM 권한이 있어야 한다.
+	- [Step 4] : AWS CodeStar 프로젝트에 대한 Amazon EC2 키 페어 만들기 [![Sources](https://img.shields.io/badge/출처-EC2KeyPair-yellow)](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/ec2-key-pairs.html)
+
+#### ☞ Serverless Project 생성 및 관리
+
+- AWS CodeStar를 사용하여 AWS SAM을 통해 Python 기반 웹 서비스를 빌드 및 배포하는 프로젝트를 생성할 수 있다.
+	- [Step 1] : 프로젝트 생성, 애플리케이션 범주 `웹 서비스`, 프로그래밍 언어 `Python`, AWS 서비스 `AWS Lambda` 선택, 프로젝트명 `My SAM Project`, "AWS CodeStar는 사용자 대신 AWS 리소스를 관리할 수 있는 권한이 필요합니다" 선택 후 Welcome to My SAM Project!가 표시될 때까지 대기 (`my-sam-project-Pipeline`, `awscodestar-my-sam-project-lambda-HelloWorld`가 자동 생성된다.)
+
+	![mysamproject](images/mysamproject.png)
+
+	- [Step 2] : CodeCommit에서 소스 코드 리포지토리를 탐색, AWS CodeStar 콘솔에서 프로젝트를 열어 둔 상태로 측면 탐색 모음에서 코드를 선택
+		- `buildspec.yml` : CodePipeline는 CodeBuild가 빌드 단계에서 AWS SAM을 사용하여 웹 서비스를 패키징하도록 지시한다.
+		- `index.py` : Lambda 함수에 대한 로직을 포함하며, 이 함수는 ISO 형식의 문자열 Hello World와 타임스탬프를 출력힌다.
+		- `README.md` : 리포지토리에 대한 일반 정보를 포함힌다.
+		- `template-configuation.json` : 프로젝트 ID로 리소스에 태그를 지정하는 데 사용되는 자리 표시자와 함께 프로젝트 ARN을 포함한다.
+		- `template.yml` : AWS SAM이 웹 서비스를 패키징하고 API 게이트웨이에서 API를 만드는 데 사용힌다.
+
+	![mysamprojectcode](images/mysamprojectcode.png)
+
+	- [Step 3] : 웹 서비스 테스트, 이전 단계의 프로젝트를 열어 둔 상태로 측면 탐색 모음에서 대시보드를 선택 (연속 배포 타일에서 소스, 빌드 및 배포 단계에 대해 Succeeded 확인)한 후, 애플리케이션 엔드포인트 링크를 선택 (`https://API_ID.execute-api.REGION_ID.amazonaws.com/Prod/`)
+
+	![mysamprojecttest](images/mysamprojecttest.png)
 
 ---
 
@@ -266,18 +315,3 @@ $sudo chmod +x /etc/init.d/codedeploy-startup.sh # 스크립트 파일을 저장
 
 - 조직은 지표와 로그를 모니터링하여 애플리케이션 및 인프라 성능이 제품의 최종 사용자 경험에 어떤 영향을 미치는지 확인한다.
 - 조직은 애플리케이션과 인프라에서 생성되는 데이터 및 로그를 캡처하고 분류한 다음 이를 분석함으로써 변경 또는 업데이트가 사용자에게 어떤 영향을 주는지 이해하고, 문제의 근본 원인 또는 예상치 못한 변경에 대한 통찰력을 확보하게 된다.
-
-### ■ Communication & Cooperation
-
-- 조직에서 커뮤니케이션과 협업이 증가하는 것도 DevOps의 주요 문화적 측면 중 하나이다.
-- DevOps 도구 및 소프트웨어 제공 프로세스 자동화를 사용하면 개발 및 운영의 워크플로와 책임을 물리적으로 합침으로써 협업이 이루어지게 된다.
-- 해당 팀에서는 이 위에 채팅 애플리케이션, 문제 또는 프로젝트 추적 시스템, wiki를 사용하여 커뮤니케이션을 지원하고 정보를 공유하는 강력한 문화적 표준을 확립한다.
-- 이를 통해 개발자와 운영 그리고 마케팅이나 영업과 같은 다른 팀 간에도 커뮤니케이션이 활발해지면서 조직의 모든 부분에서 목표와 프로젝트에 좀 더 가깝게 다가갈 수 있다.
-
-### ■ DevOps Tools
-
-- DevOps 모델이 팀에서 고객을 위해 신속하고 안정적으로 배포하고 혁신하도록 지원하려면 효과적인 도구가 필요하다.
-- 이러한 도구는 수동 작업을 자동화하고, 팀이 규모에 따라 복잡한 환경을 관리하도록 지원하며, 엔지니어가 DevOps에서 지원하는 빠른 속도를 관리할 수 있도록 해준다.
-
----
-
