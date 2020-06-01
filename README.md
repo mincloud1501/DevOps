@@ -214,7 +214,39 @@ $sudo chmod +x /etc/init.d/codedeploy-startup.sh # 스크립트 파일을 저장
 	- [Step 5] 파이프라인 결과 확인 : EC2 Instance의 Public DNS (http://ec2-3-22-68-153.us-east-2.compute.amazonaws.com/) 를 웹 브라우저에서 확인
 
 	![coderesult](images/coderesult.png)
-	
+
+---
+
+#### ☞ Build 단계 : CodeBuild [![Sources](https://img.shields.io/badge/출처-CodeBuild-yellow)](https://docs.aws.amazon.com/ko_kr/codebuild/latest/userguide/welcome.html)
+
+- CodeBuild는 Source Code를 Compile하고 단위 테스트를 실행하며 배포할 준비가 완료된 Artifact를 생성한다.
+- CodeBuild에서는 자체 빌드 서버를 프로비저닝, 관리 및 확장할 필요가 없고, Apache Maven, Gradle 등과 같은 널리 사용되는 프로그래밍 언어 및 빌드 도구에 맞게 사전 패키지된 빌드 환경을 제공한다.
+- CodeBuild는 최대 빌드 요청 수에 맞게 자동으로 확장된다.
+
+![codebuild](images/codebuild.png)
+
+- Console을 사용하여 AWS CodeBuild 시작하기
+	- [Step 1] : 두 개의 S3 버킷 생성 (입력 : `codebuild-region-ID-account-ID-input-bucket`, 출력 : `codebuild-region-ID-account-ID-output-bucket`)
+	- [Step 2] : 소스 코드 생성, MessageUtil.java 및 TestMessageUtil.java, pom.xml 파일 생성
+	- [Step 3] : buildspec.yml 파일 생성 후, 소스 코드 및 빌드 사양 파일을 입력 버킷에 추가 (`MessageUtil.zip` 파일을 생성)
+
+	![inputbucket](images/inputbucket.png)
+
+	- [Step 4] : 빌드 프로젝트 생성, CodeBuild Console (https://console.aws.amazon.com/codesuite/codebuild/home) 에 접속하여, 빌드 프로젝트명(`codebuild-demo-project`) 입력 후
+		- 소스의 소스 공급자 `Amazon S3`, 버킷 `codebuild-region-ID-account-ID-input-bucket`, S3 object key(S3 객체 키) `MessageUtil.zip`, 환경 이미지 `관리형 이미지`
+		- 운영 체제 `Amazon Linux 2`, 런타임 `표준`, 이미지 `aws/codebuild/amazonlinux2-x86_64-standard:2.0`, 서비스 역할 `New service role(새 서비스 역할)`
+		- Buildspec(빌드 사양) `Use a buildspec file(빌드 사양 파일 사용)`, 결과물 유형 `Amazon S3`, 버킷 이름 `codebuild-region-ID-account-ID-output-bucket`
+
+	![buildproject](images/buildproject.png)
+
+	- [Step 5] : 빌드 실행
+
+	![buildprojectresult](images/buildprojectresult.png)
+
+	- [Step 6] : 빌드 출력 아티팩트 가져오기, Amazon S3 콘솔에서 출력 버킷을 선택하여 target 폴더에서 빌드 출력 결과물을 확인한다.
+
+	![buildprojecttarget](images/buildprojecttarget.png)
+
 ---
 
 ### ■ Microservice
