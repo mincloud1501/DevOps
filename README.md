@@ -346,6 +346,47 @@ To ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/My-SAM-Project
 {"output": "Hello mincloud"}
 ```
 
+#### ☞ CodeStar로 Team 작업하기
+
+![teamproject](images/teamproject.png)
+
+- AWS CodeStar 콘솔 (https://console.aws.amazon.com/codestar/) 에서 Team을 선택하여 팀원 (IAM 사용자)을 추가한다.
+- 팀원 추가 탭의 프로젝트 역할에서 이 사용자의 AWS CodeStar 역할(소유자, 기고자 또는 최종 사용자)을 선택한다.
+- 새 팀원에게 다음 정보를 제공한다.
+	- AWS CodeStar 프로젝트의 연결 정보
+	- 소스 코드가 CodeCommit에 저장되어 있는 경우 로컬 컴퓨터에서 Git 자격 증명으로 CodeCommit 리포지토리에 대한 액세스를 설정하는 지침
+	- AWS CodeStar 사용자 프로필 작업 에 설명된 대로 사용자가 표시 이름, 이메일 주소, 퍼블릭 Amazon EC2 SSH 키를 관리하는 방법에 대한 정보
+	- 일회용 암호와 연결 정보(사용자가 AWS를 처음 사용하며 해당 사용자의 IAM 사용자를 만든 경우) 암호는 사용자가 처음 로그인하면 만료되며, 사용자는 새 암호를 선택해야 한다.
+
+---
+
+### AWS Cloud9 [![Sources](https://img.shields.io/badge/출처-Cloud9-yellow)](https://docs.aws.amazon.com/ko_kr/cloud9/latest/user-guide/welcome.html)
+
+- AWS Cloud9은 코드를 작성, 실행 및 디버깅하는 데 사용하는 클라우드 기반 통합 개발 환경(IDE)
+- AWS Cloud9를 사용하면 소프트웨어를 코드화, 빌드, 실행, 테스트, 디버그 및 릴리스할 수 있다.
+	- 여러 프로그래밍 언어로 된 코드 및 AWS 클라우드 개발 키트 사용 (AWS CDK)
+	- 실행 중인 도커 컨테이너에서 코드 작업
+	- 온라인 코드 리포지토리 사용
+	- 실시간으로 다른 사람과 협업
+	- 다양한 데이터베이스 및 웹 사이트 기술과 상호 작용
+	- AWS Lambda, Amazon API Gateway 및 AWS Serverless Applications 대상 지정
+	- Amazon Lightsail, AWS CodeStar 등 기타 AWS 제품 활용 AWS 코드파이프라인
+
+- Individual User Setup procedures를 통해 Cloud9을 사용해 보자.
+	- [Step 1] : Cloud9 console (https://console.aws.amazon.com/cloud9) 접속하여, 환경 생성 (환경명 `my-demo-environment`)
+	- [Step 2] : Environment type `EC2`, Instance type `t2.micro`, Platform `Amazon Linux`, Cost-saving setting `After 30 minutes (default)`
+
+	![cloud9review](images/cloud9review.png)
+	![createcloud9](images/createcloud9.png)
+
+	- [Step 3] : 오른쪽 Remote Function 창에서 이전 my-sam-prject를 import해 보자.
+
+	![cloud9console](images/cloud9console.png)
+
+	- [Step 4] : 오른쪽 위 Share를 통해 다른 사용자와 IDE를 공유하여 사용할 수 있다.
+
+	![shareconsole](images/shareconsole.png)
+
 ---
 
 ### ■ Microservice
