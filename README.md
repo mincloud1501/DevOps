@@ -296,6 +296,23 @@ $sudo chmod +x /etc/init.d/codedeploy-startup.sh # 스크립트 파일을 저장
 
 	![mysamprojecttest](images/mysamprojecttest.png)
 
+
+#### ☞ 프로젝트 코드를 편집하기 위한 로컬 워크스테이션 설정
+
+- 로컬 워크스테이션을 설정하여 AWS CodeStar 프로젝트의 소스 코드를 편집한다.
+	- [Step 1] : Visual Studio가 설치되어 있으면, Visual Studio 및 리포지토리 복제 URL에서 `HTTPS`를 선택한 후, 지침보기를 선택
+	- [Step 2] : AWS Toolkit for Visual Studio 설치 후, Visual Studio에 연결 AWS Explorer에서 Add a Region 선택
+	- [Step 3] : 로컬 워크스테이션에 Git을 설정하고, IAM 사용자에 대한 Git 자격 증명을 생성
+
+	![httpsgit](images/httpsgit.png)
+
+	- [Step 4] : 프로젝트의 CodeCommit 리포지토리를 로컬 워크스테이션에 복제
+
+```bash
+$ git clone ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/My-SAM-Project
+```
+
+
 ---
 
 ### ■ Microservice
