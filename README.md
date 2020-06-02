@@ -306,12 +306,45 @@ $sudo chmod +x /etc/init.d/codedeploy-startup.sh # 스크립트 파일을 저장
 
 	![httpsgit](images/httpsgit.png)
 
-	- [Step 4] : 프로젝트의 CodeCommit 리포지토리를 로컬 워크스테이션에 복제
+	- [Step 4] : 프로젝트의 CodeCommit 리포지토리를 로컬 워크스테이션에 복제 후, VS Code에 `Git Extension Pack` 설치
 
 ```bash
 $ git clone ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/My-SAM-Project
 ```
 
+#### ☞ 웹 서비스에 로직 추가
+
+- 로컬 워크스테이션을 사용하여 웹 서비스에 로직을 추가하고, Lambda 함수를 추가한 다음 API 게이트웨이의 API에 연결해 본다.
+- `hello.py` 파일 추가 및 `template.yml` 파일에 내용 추가
+
+```bash
+$ git add .
+
+$ git commit -m "Added hello.py and updated template.yaml."
+[master 328ab7c] Added hello.py and updated template.yaml.
+ 2 files changed, 27 insertions(+), 1 deletion(-)
+ create mode 100644 hello.py
+
+$ git push
+Enumerating objects: 6, done.
+Counting objects: 100% (6/6), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 565 bytes | 141.00 KiB/s, done.
+Total 4 (delta 2), reused 0 (delta 0)
+To ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/My-SAM-Project
+   da5ccd4..328ab7c  master -> master
+```
+
+- AWS CodeStar는 Push를 감지한 후, CodePipeline가 CodeBuild 및 AWS SAM을 사용하여 자동으로 웹 서비스를 다시 빌드 및 배포하도록 지시한다. 프로젝트 대시보드에서 배포 진행 상황을 볼 수 있다.
+
+![projectdashboard](images/projectdashboard.png)
+
+- 애플리케이션 엔드포인트 URL(예: https://API_ID.execute-api.REGION_ID.amazonaws.com/Prod/hello/mincloud) 결과를 확인한다.
+
+```bash
+{"output": "Hello mincloud"}
+```
 
 ---
 
