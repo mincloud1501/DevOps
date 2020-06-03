@@ -1,5 +1,5 @@
 # DevOps
-DevOps에 대한 개념 이해와 AWS의 개발자 도구를 사용한 실습 및 연구 [![Sources](https://img.shields.io/badge/출처-awsdevops-yellow)](https://aws.amazon.com/ko/devops/what-is-devops/)
+DevOps에 대한 개념 이해와 AWS의 개발자 도구를 활용한 실습 및 연구 [![Sources](https://img.shields.io/badge/출처-awsdevops-yellow)](https://aws.amazon.com/ko/devops/what-is-devops/)
 
 
 ### DevOps 모델 정의
@@ -50,6 +50,7 @@ DevOps에 대한 개념 이해와 AWS의 개발자 도구를 사용한 실습 �
 
 - AWS Developer Tools 및 AWS CodeCommit(관리형 소스 제어 서비스), AWS CodeBuild(완전히 관리되는 빌드 서비스), CodePipeline(완전히 관리되는 연속 전송 서비스), CodeDeploy(자동화된 애플리케이션 배포 서비스)와 CodeStar 및 Cloud9에 대해 실습해 본다.
 
+![aws](images/aws.png)
 ![architecture](images/architecture.png)
 
 
