@@ -1,5 +1,5 @@
 # DevOps
-DevOps에 대한 개념 및 AWS의 여러 Tool 사용을 통한 실습 및 연구 [![Sources](https://img.shields.io/badge/출처-awsdevops-yellow)](https://aws.amazon.com/ko/devops/what-is-devops/)
+DevOps에 대한 개념 이해와 AWS의 개발자 도구를 사용한 실습 및 연구 [![Sources](https://img.shields.io/badge/출처-awsdevops-yellow)](https://aws.amazon.com/ko/devops/what-is-devops/)
 
 
 ### DevOps 모델 정의
@@ -44,14 +44,21 @@ DevOps에 대한 개념 및 AWS의 여러 Tool 사용을 통한 실습 및 연�
 - 그러나, 마이크로 서비스와 릴리스 빈도 증가의 조합은 배포 수를 현저히 늘려 운영 문제로 이어질 수 있다. 따라서 지속적 통합 및 지속적 전달과 같은 DevOps 방식을 사용하면, 이러한 문제를 해결하고 조직이 안전하고 안정적인 방식으로 신속하게 업데이트를 제공할 수 있게 된다.
 - 코드형 인프라 및 구성 관리와 같은 인프라 자동화 방식은 잦은 변경에 대해 컴퓨팅 리소스를 탄력적이고 대응적으로 유지하는 데 도움이 된다. 또한, 모니터링과 로깅의 사용도 엔지니어가 애플리케이션 및 인프라의 성능을 추적하여 문제에 신속하게 대응할 수 있게 하는 데 도움이 된다.
 
-- [지속적 통합] ▶ [지속적 전달] ▶ [Mocroservice] ▶ [Code형 Infra] ▶ [Monitoring & Logging] ▶ [Communication & Cooperation]
-
 ---
 
-### ■ 지속적 통합 (CodeCommit) [![Sources](https://img.shields.io/badge/출처-CodeCommit-yellow)](https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/welcome.html)
+# AWS DevOps Development Tool
+
+- AWS Developer Tools 및 AWS CodeCommit(관리형 소스 제어 서비스), AWS CodeBuild(완전히 관리되는 빌드 서비스), CodePipeline(완전히 관리되는 연속 전송 서비스), CodeDeploy(자동화된 애플리케이션 배포 서비스)와 CodeStar 및 Cloud9에 대해 실습해 본다.
+
+![architecture](images/architecture.png)
+
+
+## ■ CodeCommit [![Sources](https://img.shields.io/badge/출처-CodeCommit-yellow)](https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/welcome.html)
 
 - 자동화된 빌드 및 테스트가 수행된 후, 개발자가 코드 변경 사항을 중앙 리포지토리에 정기적으로 병합하는 소프트웨어 개발 방식
 - 지속적 통합의 핵심 목표는 버그를 신속하게 찾아 해결하고, 소프트웨어 품질을 개선하고, 새로운 소프트웨어 업데이트를 검증 및 릴리스하는데 걸리는 시간을 단축하는 것이다.
+
+![codecommitworkflow](images/codecommitworkflow.png)
 
 
 #### ☞ 1단계: CodeCommit 리포지토리 사용을 위한 권한 및 SSH 설정
@@ -135,7 +142,7 @@ $ git push
 
 ---
 
-### ■ 지속적 전달 (CodePipeline) [![Sources](https://img.shields.io/badge/출처-CodePipeline-yellow)](https://docs.aws.amazon.com/ko_kr/codepipeline/latest/userguide/welcome.html)
+## ■ CodePipeline [![Sources](https://img.shields.io/badge/출처-CodePipeline-yellow)](https://docs.aws.amazon.com/ko_kr/codepipeline/latest/userguide/welcome.html)
 
 - CodePipeline은 소프트웨어 변경 내용을 지속적으로 릴리스하는데 필요한 단계를 자동화한다.
 - 프로덕션에 릴리스하기 위한 코드 변경이 자동으로 빌드, 테스트 및 준비되는 소프트웨어 개발 방식
@@ -143,10 +150,32 @@ $ git push
 
 ![CodePipeline](images/CodePipeline.png)
 
-#### ☞ 배포 단계 : CodeDeploy [![Sources](https://img.shields.io/badge/출처-CodeDeploy-yellow)](https://docs.aws.amazon.com/ko_kr/codedeploy/latest/userguide/welcome.html)
+### ☞ 배포 단계 : CodeDeploy [![Sources](https://img.shields.io/badge/출처-CodeDeploy-yellow)](https://docs.aws.amazon.com/ko_kr/codedeploy/latest/userguide/welcome.html)
 
 - CodeDeploy는 Amazon EC2 인스턴스, 온프레미스 인스턴스, 서버리스 Lambda 함수 또는 Amazon ECS 서비스로 애플리케이션 배포를 자동화하는 배포 서비스를 말한다.
 - Code, 서버리스 AWS Lambda 함수, 웹 및 구성 파일, 실행 파일, packages, 스크립트, 멀티미디어 파일의 다양한 애플리케이션 콘텐츠를 거의 무제한으로 배포할 수 있다.
+
+[In-Place Deploy Diagram]
+
+![inplacedeploy](images/inplacedeploy.png)
+
+[구성요소]
+
+- `Application` : 배포할 애플리케이션을 고유하게 식별하는 이름
+- `Computing Platform` : CodeDeploy가 애플리케이션을 배포하는 플랫폼
+	- `EC2/온프레미스`: 물리적 서버의 인스턴스
+	- `AWS Lambda` : 업데이트 버전의 Lambda 함수로 구성된 애플리케이션을 배포하는 데 사용
+	- `Amazon ECS` : 컨테이너화된 Amazon ECS 애플리케이션을 작업 세트로 배포하는 데 사용
+- `배포 구성` : 배포 중 CodeDeploy에서 사용하는 배포 규칙과 배포 성공 및 실패 조건 세트 (Canary/Linear/All-at-once)
+- `배포 그룹` : 개별 인스턴스 세트. 배포 그룹에는 개별적으로 태그가 지정된 인스턴스, Amazon EC2 Auto Scaling 그룹의 Amazon EC2 인스턴스 또는 둘 다 포함
+- `배포 유형` : 배포 그룹의 인스턴스에서 최신 애플리케이션 개정을 사용 가능하게 만드는 방법
+	- `실행 중 배포` : 배포 그룹의 각 인스턴스에 있는 애플리케이션이 중지되고 최신 애플리케이션 개정 버전이 설치되며 애플리케이션의 새 버전이 시작되고 유효성이 검사된다.
+	- `Blue/Green 배포` : 새 애플리케이션 버전의 변경으로 인한 중단을 최소화하면서 애플리케이션을 업데이트하는 데 사용
+- `IAM 인스턴스 프로파일` : Amazon EC2 인스턴스에 연결하는 IAM 역할
+- `개정` : AWS Lambda 배포 개정은 배포할 Lambda 함수에 대한 정보를 지정하는 YAML 형식 또는 JSON 형식의 파일
+- `서비스 역할` : AWS 리소스에 액세스할 수 있는 권한을 AWS 서비스에 부여하는 IAM 역할
+- `대상 개정` : 리포지토리에 업로드했고 배포 그룹의 인스턴스에 배포하려는 가장 최신 버전의 애플리케이션 개정
+
 
 - EC2 Linux 인스턴스 생성 및 CodeDeploy 에이전트 설치 (free version으로 1$가 결재된다.)
 	- sample application이 배포되는 EC2 인스턴스를 생성한다.
@@ -217,7 +246,7 @@ $sudo chmod +x /etc/init.d/codedeploy-startup.sh # 스크립트 파일을 저장
 
 ---
 
-#### ☞ Build 단계 : CodeBuild [![Sources](https://img.shields.io/badge/출처-CodeBuild-yellow)](https://docs.aws.amazon.com/ko_kr/codebuild/latest/userguide/welcome.html)
+### ☞ Build 단계 : CodeBuild [![Sources](https://img.shields.io/badge/출처-CodeBuild-yellow)](https://docs.aws.amazon.com/ko_kr/codebuild/latest/userguide/welcome.html)
 
 - CodeBuild는 Source Code를 Compile하고 단위 테스트를 실행하며 배포할 준비가 완료된 Artifact를 생성한다.
 - CodeBuild에서는 자체 빌드 서버를 프로비저닝, 관리 및 확장할 필요가 없고, Apache Maven, Gradle 등과 같은 널리 사용되는 프로그래밍 언어 및 빌드 도구에 맞게 사전 패키지된 빌드 환경을 제공한다.
@@ -250,7 +279,7 @@ $sudo chmod +x /etc/init.d/codedeploy-startup.sh # 스크립트 파일을 저장
 
 ---
 
-### ■ Communication & Cooperation (CodeStar) [![Sources](https://img.shields.io/badge/출처-CodeStar-yellow)](https://docs.aws.amazon.com/ko_kr/codestar/latest/userguide/welcome.html)
+## ■ CodeStar [![Sources](https://img.shields.io/badge/출처-CodeStar-yellow)](https://docs.aws.amazon.com/ko_kr/codestar/latest/userguide/welcome.html)
 
 - AWS CodeStar는 AWS에서 소프트웨어 개발 프로젝트를 생성, 관리, 작업하기 위한 클라우드 기반 서비스
 - AWS CodeStar 프로젝트를 통해 AWS에서 애플리케이션을 빠르게 개발, 빌드, 배포할 수 있다.
@@ -264,6 +293,8 @@ $sudo chmod +x /etc/init.d/codedeploy-startup.sh # 스크립트 파일을 저장
 - 팀에 대한 프로젝트 액세스 관리
 - 한 곳에서 프로젝트에 대한 시각화, 운영 협업
 - 필요한 모든 도구로 신속하게 반복
+
+![codestarworkflow](images/codestarworkflow.png)
 
 #### ☞ CodeStar 설정 단계
 
@@ -360,7 +391,7 @@ To ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/My-SAM-Project
 
 ---
 
-### AWS Cloud9 [![Sources](https://img.shields.io/badge/출처-Cloud9-yellow)](https://docs.aws.amazon.com/ko_kr/cloud9/latest/user-guide/welcome.html)
+## Cloud9 [![Sources](https://img.shields.io/badge/출처-Cloud9-yellow)](https://docs.aws.amazon.com/ko_kr/cloud9/latest/user-guide/welcome.html)
 
 - AWS Cloud9은 코드를 작성, 실행 및 디버깅하는 데 사용하는 클라우드 기반 통합 개발 환경(IDE)
 - AWS Cloud9를 사용하면 소프트웨어를 코드화, 빌드, 실행, 테스트, 디버그 및 릴리스할 수 있다.
@@ -379,7 +410,7 @@ To ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/My-SAM-Project
 	![cloud9review](images/cloud9review.png)
 	![createcloud9](images/createcloud9.png)
 
-	- [Step 3] : 오른쪽 Remote Function 창에서 이전 my-sam-prject를 import해 보자.
+	- [Step 3] : 오른쪽 Remote Function 창에서 이전 my-sam-project를 import해 보자.
 
 	![cloud9console](images/cloud9console.png)
 
@@ -389,20 +420,37 @@ To ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/My-SAM-Project
 
 ---
 
-### ■ Microservice
+### Atlassian JIRA(통합) 설정
 
-- 단일 애플리케이션을 작은 서비스의 집합으로 구축하는 설계 접근 방식
-- 각 서비스는 자체 프로세스에서 실행되고, 주로 HTTP 기반 API라는 간편한 메커니즘을 사용하는 잘 정의된 인터페이스를 통해 다른 서비스와 통신한다.
-- 비즈니스 기능을 중심으로 구축되며, 각 서비스는 단일 목적으로 한정되어 있다. 다양한 프레임워크 또는 프로그래밍 언어를 사용하여 마이크로 서비스를 작성하고, 이를 독립적으로 단일 서비스 또는 서비스 그룹으로 배포할 수 있다.
+- [Step 1] : Jira에 로그인 및 Jira URL 복사 (https://www.atlassian.com/try/cloud/signup?bundle=jira-software)
+- [Step 2] : Jira URL을 AWS CodeStar에 추가
 
-### ■ Code형 Infra
+![addurl](images/addurl.png)
 
-- 버전 관리 및 지속적 통합과 같은 코드와 소프트웨어 개발 기술을 사용하여 인프라를 프로비저닝하고 관리하는 방식
-- Cloud의 API 중심 모델을 사용하면 개발자와 시스템 관리자가 수동으로 리소스를 설정 및 구성할 필요 없이 프로그래밍 방식으로 대규모로 인프라와 상호 작용할 수 있다.
-- 엔지니어는 코드 기반 도구를 사용하여 인프라와 인터페이스하고, 애플리케이션 코드를 다루는 방법과 유사한 방식으로 인프라를 다룰 수 있다.
-- 인프라가 코드를 통해 정의되므로 인프라와 서버를 표준화된 패턴을 사용하여 배포하고, 최신 패치와 버전으로 업데이트하거나, 반복 가능한 방식으로 복제할 수 있다.
+- [Step 3] : Jira에서 Application Link 생성, Jira `애플리케이션 링크` 메뉴에서 생성된 AWS CodeStar 프로젝트 URL을 연결, 애플리케이션명 `AWS CodeStar-my-sam-project` 입력
+	- Jira가 경고를 표시하면 계속을 선택합니다. 이는 인증이 설정되지 않았기 때문에 표시되는 일회성 경고로 계속 진행한다.
 
-### ■ Monitoring & Logging
+![addurl](images/addurl.png)
 
-- 조직은 지표와 로그를 모니터링하여 애플리케이션 및 인프라 성능이 제품의 최종 사용자 경험에 어떤 영향을 미치는지 확인한다.
-- 조직은 애플리케이션과 인프라에서 생성되는 데이터 및 로그를 캡처하고 분류한 다음 이를 분석함으로써 변경 또는 업데이트가 사용자에게 어떤 영향을 주는지 이해하고, 문제의 근본 원인 또는 예상치 못한 변경에 대한 통찰력을 확보하게 된다.
+- [Step 4] : Jira에서 `들어오는 인증 구성`에서 사용자 키, 이름 및 퍼블릭 키 정보를 복사하여 Jira의 해당 필드에 입력
+
+![createlink](images/createlink.png)
+![oauth](images/oauth.png)
+
+- [Step 5] : AWS CodeStar 프로젝트를 Jira에 연결, [연결]을 선택 후, 메시지가 나타나면 [허용]을 선택하면 연결 완료되고 CodeStar Dashboard에서 연결됨을 확인할 수 있다.
+
+![connectjira](images/connectjira.png)
+
+---
+
+### AWS X-Ray 설정
+
+- AWS X-Ray는 애플리케이션이 처리하는 요청에 대한 데이터를 수집하는 서비스로, 해당 데이터를 보고, 필터링하고, 통찰을 얻어 문제와 최적화 기회를 식별할 수 있는 도구를 제공
+- 애플리케이션에 대한 모든 트레이스된 요청에서, 요청 및 응답뿐 아니라 애플리케이션이 다운스트림 AWS 리소스, 마이크로서비스, 데이터베이스 및 HTTP 웹 API에 대해 하는 호출에 대해서도 상세한 정보를 확인할 수 있다.
+
+- X-Ray SDK는 다음을 제공한다.
+	- `인터셉터` : 수신 HTTP 요청을 트레이스하는 코드에 추가된다.
+	- `클라이언트 핸들러` : 애플리케이션이 다른 AWS 서비스를 호출하는 데 사용하는 AWS SDK 클라이언트를 구현한다.
+	- `HTTP 클라이언트` : 다른 내부 및 외부 HTTP 웹 서비스에 대한 호출을 구성하는 데 사용된다.
+
+![xrayarchitecture](images/xrayarchitecture.png)
