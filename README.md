@@ -455,3 +455,35 @@ To ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/My-SAM-Project
 	- `HTTP 클라이언트` : 다른 내부 및 외부 HTTP 웹 서비스에 대한 호출을 구성하는 데 사용된다.
 
 ![xrayarchitecture](images/xrayarchitecture.png)
+
+---
+
+## ■ Elastic Beanstalk [![Sources](https://img.shields.io/badge/출처-ElasticBeanstalk-yellow)](https://docs.aws.amazon.com/ko_kr/elasticbeanstalk/latest/dg/Welcome.html)
+
+- 애플리케이션을 실행하는 인프라에 대한 염려 없이 AWS 클라우드에서 애플리케이션을 신속하게 배포 및 관리할 수 있다.
+- 애플리케이션을 업로드하기만 하면 Elastic Beanstalk에서 용량 프로비저닝, 로드 밸런싱, 조정, 애플리케이션 상태 모니터링에 대한 세부 정보를 자동으로 처리해 준다.
+- 애플리케이션을 배포할 때, Elastic Beanstalk가 선택된 지원 가능 플랫폼 버전을 구축하고 Amazon EC2 인스턴스 등의 AWS 리소스를 하나 이상 프로비저닝하여 애플리케이션을 실행한다.
+- 애플리케이션을 생성 및 배포한 후에는 애플리케이션 정보(측정치), 이벤트 및 환경 상태 등을 Elastic Beanstalk 콘솔, API 또는 통합된 AWS CLI 등 명령줄 인터페이스에서 확인할 수 있다.
+
+![elasticbeanstalk](images/elasticbeanstalk.png)
+
+#### ☞ 애플리케이션 및 환경 생성
+
+- [Step 1] : 애플리케이션 생성을 위해 Elastic Beanstalk 콘솔 (https://console.aws.amazon.com/elasticbeanstalk/home#/gettingStarted?applicationName=getting-started-app) 에서 `Node.js` 플랫폼을 선택 후 (본 실습에서는 Node.js를 선택) [애플리케이션 생성]을 선택하면, 하기 리소스가 `GettingStartedApp-env` 환경으로 생성된다.
+	- Amazon Elastic Compute Cloud(Amazon EC2) 인스턴스(가상 머신)
+	- Amazon EC2 보안 그룹
+	- Amazon Simple Storage Service(Amazon S3) 버킷
+	- Amazon CloudWatch 경보
+	- AWS CloudFormation 스택
+	- 도메인 이름
+
+![gettingstartedapp](images/gettingstartedapp.png)
+
+- [Step 2] : 새 버전의 애플리케이션 배포, 실행 버전 항목을 `업로드 및 배포`를 통해 다운로드한 샘플 application을 업로드 한다. (본 실습에서는 `nodejs-v1.zip` 사용)
+
+![upload](images/upload.png)
+![uploadresult](images/uploadresult.png)
+
+- [Step 3] : 환경 구성 (환경 용량 변경), 구성>용량>편집에서 Auto Scaling 그룹 섹션에서 환경 유형을 `로드 밸런싱 수행`, 인스턴스 행에서 최대 `4`, 최소 `2`로 변경 후 적용, 이 업데이트가 현재 인스턴스를 모두 대체한다는 경고가 표시되면 [Confirm] 선택
+
+![status](images/status.png)
