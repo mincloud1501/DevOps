@@ -487,3 +487,68 @@ To ssh://git-codecommit.us-east-2.amazonaws.com/v1/repos/My-SAM-Project
 - [Step 3] : 환경 구성 (환경 용량 변경), 구성>용량>편집에서 Auto Scaling 그룹 섹션에서 환경 유형을 `로드 밸런싱 수행`, 인스턴스 행에서 최대 `4`, 최소 `2`로 변경 후 적용, 이 업데이트가 현재 인스턴스를 모두 대체한다는 경고가 표시되면 [Confirm] 선택
 
 ![status](images/status.png)
+
+- [Step 4] : AWS Elastic Beanstalk 명령줄 인터페이스(EB CLI) 설치 (on Windows) [![Sources](https://img.shields.io/badge/출처-EBCli-yellow)](https://docs.aws.amazon.com/ko_kr/elasticbeanstalk/latest/dg/eb-cli3-install-windows.html)
+	- 일상적인 개발 및 테스트 사이클에서 Elastic Beanstalk 콘솔 대신 `EB CLI`를 사용한다.
+
+```bash
+C:\Windows\System32> python --version
+Python 3.7.3
+
+C:\Windows\System32> pip --version
+pip 9.0.1 from c:\users\myname\appdata\local\programs\python\python37\lib\site-packages (python 3.7)
+
+C:\Windows\System32> pip install awsebcli --upgrade --user
+
+C:\Windows\System32> eb --version
+EB CLI 3.18.1 (Python 3.7.3)
+```
+
+- [Step 5] : EB CLI로 신규 환경 구성 하기
+
+```bash
+C:\Windows\System32> eb init
+Select a default region
+14) us-east-2 : US East (Ohio)
+(default is 3): 14
+
+Select an application to use
+1) getting-started-app
+2) [ Create new Application ]
+(default is 2): 2
+
+Enter Application Name
+(default is "eb-dev"):
+Application eb-dev has been created.
+Select a platform.
+1) .NET on Windows Server
+2) Docker
+3) GlassFish
+4) Go
+5) Java
+6) Node.js
+7) PHP
+8) Packer
+9) Python
+10) Ruby
+11) Tomcat
+(make a selection): 6
+
+Select a platform branch.
+1) Node.js 12 running on 64bit Amazon Linux 2
+2) Node.js 10 running on 64bit Amazon Linux 2
+3) Node.js running on 64bit Amazon Linux
+(default is 1): 1
+
+Cannot setup CodeCommit because there is no Source Control setup, continuing with initialization
+Do you want to set up SSH for your instances?
+(Y/n): Y
+
+Select a keypair.
+1) my_instance
+2) [ Create new KeyPair ]
+(default is 1): 1
+```
+
+- [Step 6] : EB CLI를 사용하여 Elastic Beanstalk 환경 관리
+	- Eb create/status/health/events/logs/open/deploy/config/terminate
