@@ -584,3 +584,60 @@ Select a keypair.
 - 특정 이벤트가 발생할 때 알리도록 `CloudWatch Logs` 경보를 설정 모니터링할 수 있으며, 정교한 분석을 위해 `Amazon Athena`를 사용할 수 있다.
 
 ![logattribute](images/logattribute.png)
+
+---
+
+## ■ Athena [![Sources](https://img.shields.io/badge/출처-Athena-yellow)](https://docs.aws.amazon.com/ko_kr/athena/latest/ug/what-is.html)
+
+- Amazon Simple Storage Service(Amazon S3)에서 표준 SQL을 사용하여 데이터를 쉽게 바로 분석할 수 있는 대화형 쿼리 서비스이다.
+- JDBC 또는 ODBC 드라이버를 통해 연결된 비즈니스 인텔리전스 도구 또는 SQL 클라이언트로 데이터를 탐색할 수 있도 있다.
+
+[Step 1] : 관리형 정책 연결
+
+- IAM 계정에 Athena의 두 가지 관리형 정책으로 `AmazonAthenaFullAccess`, `AWSQuicksightAthenaAccess`을 연결한다.
+
+[Step 2] : 데이터베이스 생성
+
+- 상단의 `set up a query result location in Amazon S3`을 클릭하여 쿼리 결과 저장 위치를 설정한다. (`s3://mincloud-query-results/folder/`)
+- `CREATE DATABASE` 문을 입력하여, 데이터베이스를 생성한다.
+
+![createdb](images/createdb.png)
+
+[Step 3] : 테이블 생성
+
+- `s3://athena-examples-aws-region/cloudfront/plaintext/` 위치의 Athena 샘플 데이터를 활용한다.
+- s3://athena-examples-myregion/path/to/data/의 `myregion`을 Athena를 실행하는 리전 식별자로 바꿔준다.
+
+```bash
+CREATE EXTERNAL TABLE IF NOT EXISTS cloudfront_logs (
+  `Date` DATE,
+  Time STRING,
+  Location STRING,
+  Bytes INT,
+  RequestIP STRING,
+  Method STRING,
+  Host STRING,
+  Uri STRING,
+  Status INT,
+  Referrer STRING,
+  os STRING,
+  Browser STRING,
+  BrowserVersion STRING
+  ) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.RegexSerDe'
+  WITH SERDEPROPERTIES (
+  "input.regex" = "^(?!#)([^ ]+)\\s+([^ ]+)\\s+([^ ]+)\\s+([^ ]+)\\s+([^ ]+)\\s+([^ ]+)\\s+([^ ]+)\\s+([^ ]+)\\s+([^ ]+)\\s+([^ ]+)\\s+[^\(]+[\(]([^\;]+).*\%20([^\/]+)[\/](.*)$"
+  ) LOCATION 's3://athena-examples-us-east-2/cloudfront/plaintext/';
+```
+
+![createtable](images/createtable.png)
+
+[Step 4] : 데이터 쿼리
+
+```bash
+SELECT os, COUNT(*) count
+FROM cloudfront_logs
+WHERE date BETWEEN date '2014-07-05' AND date '2014-08-05'
+GROUP BY os;
+```
+
+![dataquery](images/dataquery.png)
