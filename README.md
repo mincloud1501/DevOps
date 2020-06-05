@@ -552,3 +552,34 @@ Select a keypair.
 
 - [Step 6] : EB CLI를 사용하여 Elastic Beanstalk 환경 관리
 	- Eb create/status/health/events/logs/open/deploy/config/terminate
+
+---
+
+## ■ CloudTrail [![Sources](https://img.shields.io/badge/출처-CloudTrail-yellow)](https://docs.aws.amazon.com/ko_kr/awscloudtrail/latest/userguide/cloudtrail-user-guide.html)
+
+- AWS CloudTrail은 계정의 거버넌스, 규정 준수, 운영 및 위험 감사를 활성화하도록 도와주는 서비스로 지원되는 AWS 서비스의 모든 관리 이벤트에 대한 지난 90일간의 계정 활동을 무료로 보고 필터링하고 다운로드할 수 있다.
+- 사용자, 역할 또는 AWS 서비스가 수행하는 작업들은 CloudTrail에 이벤트로 기록된다.
+- CloudTrail은 Amazon S3 버킷에 로그 파일을 저장한다.
+
+[Step 1] : 이벤트 기록에서 AWS 계정 활동 검토
+
+- CloudTrail 콘솔 (https://console.aws.amazon.com/cloudtrail/home) 에 접속하여, 이벤트 기록을 확인
+- 결과를 CSV 또는 JSON 형식으로 다운로드 가능하지만, 콘솔의 이벤트 보기는 로그인한 AWS 리전으로 제한된다.
+
+[Step 2] : 첫 번째 추적 생성
+
+- 모든 AWS 리전에 대한 정보를 캡처하는 AWS 계정의 지속적인 활동 레코드를 생성하려면 추적을 생성해야 한다.
+- 추적 생성을 선택하여 추적 이름 `My-Management-Events-Trail`, 데이터 이벤트에서 아무것도 변경하지 않고, S3 버킷명 `mincloud-bucket-for-cloudtrail-logs` (글로벌에서 고유한 값이어야 한다.)
+- 태그에서 하나 이상의 사용자 정의 태그(키-값 페어)를 추적에 추가한다.
+
+![createtrail](images/createtrail.png)
+
+[Step 3] : 로그 파일 보기와 경보 설정 및 분석
+
+- 생성된 S3 버킷을 선택하면, 사용 중인 모든 리전이 표기된다.
+- 리전별 날짜별로 정리된 이벤트 기록을 확인 가능하다.
+- 추적을 생성하면 CloudTrail에서 일정 수준의 보안이 자동으로 적용(`Amazon S3 관리형 암호화 키(SSE-S3)를 사용하는 서버 측 암호화`)되지만 데이터의 보안을 유지하기 위해 추가 조치 (` AWS KMS 관리형 키(SSE-KMS)로 서버 측 암호`)가 가능하다.
+
+- 특정 이벤트가 발생할 때 알리도록 `CloudWatch Logs` 경보를 설정 모니터링할 수 있으며, 정교한 분석을 위해 `Amazon Athena`를 사용할 수 있다.
+
+![logattribute](images/logattribute.png)
