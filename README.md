@@ -1,7 +1,7 @@
 # DevOps
 DevOps에 대한 개념 이해와 AWS의 개발자 도구를 활용한 실습 및 연구 [![Sources](https://img.shields.io/badge/출처-awsdevops-yellow)](https://aws.amazon.com/ko/devops/what-is-devops/)
 
-[![Video Label](https://youtu.be/_I94-tJlovg/0.jpg)](https://youtu.be/_I94-tJlovg)
+<iframe width="640" height="360" src="https://youtu.be/_I94-tJlovg" frameborder="0" gesture="media" allowfullscreen=""></iframe>
 
 ### DevOps 모델 정의
 
