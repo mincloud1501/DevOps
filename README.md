@@ -590,7 +590,7 @@ Select a keypair.
 ## ■ Athena [![Sources](https://img.shields.io/badge/출처-Athena-yellow)](https://docs.aws.amazon.com/ko_kr/athena/latest/ug/what-is.html)
 
 - Amazon Simple Storage Service(Amazon S3)에서 표준 SQL을 사용하여 데이터를 쉽게 바로 분석할 수 있는 대화형 쿼리 서비스이다.
-- JDBC 또는 ODBC 드라이버를 통해 연결된 비즈니스 인텔리전스 도구 또는 SQL 클라이언트로 데이터를 탐색할 수 있도 있다.
+- JDBC 또는 ODBC 드라이버를 통해 연결된 비즈니스 인텔리전스 도구 또는 SQL 클라이언트로 데이터를 탐색할 수도 있다.
 
 [Step 1] : 관리형 정책 연결
 
@@ -641,3 +641,51 @@ GROUP BY os;
 ```
 
 ![dataquery](images/dataquery.png)
+
+---
+
+## ■ QuickSight [![Sources](https://img.shields.io/badge/출처-QuickSight-yellow)](https://docs.aws.amazon.com/ko_kr/quicksight/latest/user/welcome.html)
+
+- Amazon QuickSight는 데이터를 사용하여 시각적 객체를 구축하고, 애드혹 분석을 수행하고, 사업과 관련된 통찰을 빠르게 얻을 수 있는 신속한 비즈니스 분석 서비스
+- 강력한 인 메모리 엔진(SPICE)을 사용하여 AWS 데이터 원본을 완벽하게 검색하고, 조직이 수십만 명의 사용자까지 규모를 조정할 수 있도록 하며, 속도와 응답성이 뛰어난 쿼리 성능을 제공한다.
+
+[Step 1] : 샘플 데이터를 사용하여 단일 시각적 객체가 포함된 분석 만들기
+
+- https://quicksight.aws.amazon.com 에 접속 후 계정 생성 
+
+![quicksightaccount](images/quicksightaccount.png)
+
+- 샘플 데이터 다운로드 (`web-and-social-analytics.csv`) 후, 새 분석 > 새 데이터 세트 > 파일 업로드 > 시각화
+
+![fileupload](images/fileupload.png)
+
+- 필드 목록 창에서 `Date`, `Mailing list adds` 선택하면, Auto Graph 창에 자동으로 생성된다.
+
+![visualizer](images/visualizer.png)
+
+[Step 2] : 준비된 데이터 세트 만들기
+
+- 우측 상단 [데이터 관리] > [새 데이터 세트] > 기존 데이터 원본에서 웹 및 소셜 미디어 분석 Amazon S3 데이터 원본 > 데이터 세트 편집
+- [Fields] 창에서 [Twitter followers cumulative] 및 [Mailing list cumulative] 필드를 선택 해제
+- [Events] 필드에 텍스트 문자열을 0-length 문자열 값으로 대체하는 계산된 필드를 추가 (계산된 필드명 `populated_event`)
+- 함수 목록에서 `ifelse` 선택 후, 동식에 추가 함수 및 파라미터 입력 후 생성 (`ifelse(strlen({Events})=0,'Unknown',{Events})`)
+- 데이터 세트명을 `Marketing`으로 저장
+
+![addfield](images/addfield.png)
+
+[Step 3] : 분석 만들기
+
+- 분석 페이지의 Fields list 창에서 `Date` 및 `Return visitors`를 선택
+- 좌측 상단의 [시각적 객체 추가], [시각적 객체 유형] `산점도` 선택
+- 필드 목록의 X축에 [Desktop Uniques], Y축에 [Mobile Uniques], 그룹/색상에 [Date] 선택
+
+![makeanalysys](images/makeanalysys.png)
+
+[Step 4] : 대시보드 만들기
+
+- 우측 상단 [공유] > [대시보드 게시], 대시보드명 `Marketing Dashboard` 으로 대시보드 생성
+- 대시보드 공유를 통해 타 사용자와 공유가 가능하다.
+
+---
+
+## ■ Glue [![Sources](https://img.shields.io/badge/출처-Glue-yellow)](https://docs.aws.amazon.com/ko_kr/athena/latest/ug/glue-athena.html)
