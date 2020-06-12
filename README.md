@@ -642,6 +642,18 @@ GROUP BY os;
 
 ![dataquery](images/dataquery.png)
 
+
+#### AWS Glue [![Sources](https://img.shields.io/badge/출처-Glue-yellow)](https://docs.aws.amazon.com/ko_kr/glue/latest/dg/what-is-glue.html)
+
+- AWS Glue는 완전 관리형 ETL(추출, 변환 및 로드) 서비스로 데이터를 분류, 정리, 보강하고 다양한 데이터 스토어 간에 안정적으로 이동할 수 있다.
+- AWS Glue는 데이터 세트에서 데이터베이스 및 테이블 스키마를 자동으로 크롤링하여 관련 메타데이터를 AWS Glue 데이터 카탈로그에 저장한다.
+- AWS Athena에서는 기본적으로 AWS Glue 데이터 카탈로그에 등록된 데이터 세트 및 데이터 원본의 쿼리를 지원한다.
+- Data Catalog를 사용하여 Athena에서 데이터 조작 언어(DML) 쿼리를 소스로 실행하면, Data Catalog 스키마를 사용하여 기본 데이터 세트에서 통찰력을 추출한다.
+- 데이터 정의 언어(DDL) 쿼리를 실행할 때 정의하는 스키마는 AWS Glue 데이터 카탈로그에 정의된다.
+- Athena 내의 데이터 원본에서 AWS Glue 크롤러를 실행하여 AWS Glue 데이터 카탈로그에서 스키마를 생성할 수도 있다.
+
+![glue_architecture](images/glue_architecture.png)
+
 ---
 
 ## ■ QuickSight [![Sources](https://img.shields.io/badge/출처-QuickSight-yellow)](https://docs.aws.amazon.com/ko_kr/quicksight/latest/user/welcome.html)
@@ -685,7 +697,3 @@ GROUP BY os;
 
 - 우측 상단 [공유] > [대시보드 게시], 대시보드명 `Marketing Dashboard` 으로 대시보드 생성
 - 대시보드 공유를 통해 타 사용자와 공유가 가능하다.
-
----
-
-## ■ Glue [![Sources](https://img.shields.io/badge/출처-Glue-yellow)](https://docs.aws.amazon.com/ko_kr/athena/latest/ug/glue-athena.html)
